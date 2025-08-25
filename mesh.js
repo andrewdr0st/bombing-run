@@ -1,4 +1,4 @@
-class Mesh {
+export class Mesh {
     constructor(v, vCount, i, iCount) {
         this.vertices = v;
         this.vertexCount = vCount;
@@ -7,7 +7,7 @@ class Mesh {
     }
 }
 
-class MeshLoader {
+export class MeshLoader {
     constructor() {
         this.positions = [];
         this.textureCoords = [];

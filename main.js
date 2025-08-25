@@ -1,3 +1,6 @@
+import { setupGPUDevice } from "./gpu.js";
+import { establishConnection } from "./network.js";
+
 let lastFrameTime = 0;
 
 async function init() {
@@ -5,6 +8,7 @@ async function init() {
     if (!webgpuSupport) {
         return;
     }
+    establishConnection();
     requestAnimationFrame(main);
 }
 
@@ -14,3 +18,5 @@ function main(currentTime) {
 
     requestAnimationFrame(main);
 }
+
+init();

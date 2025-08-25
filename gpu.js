@@ -1,5 +1,5 @@
 let adapter;
-let device;
+export let device;
 let presentationFormat;
 
 async function loadWGSLShader(f) {
@@ -13,7 +13,7 @@ async function loadImage(path) {
     return await createImageBitmap(blob);
 }
 
-async function setupGPUDevice() {
+export async function setupGPUDevice() {
     adapter = await navigator.gpu?.requestAdapter();
     if (!adapter) {
         alert("Device does not support WebGPU");

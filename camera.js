@@ -1,4 +1,6 @@
-class Camera {
+const { vec3, mat4 } = wgpuMatrix;
+
+export class Camera {
     constructor(aspectRatio) {
         this.position = [0, 0, 0];
         this.lookTo = [0, 0, -1];
