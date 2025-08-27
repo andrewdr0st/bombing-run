@@ -1,5 +1,6 @@
 import { setupGPUDevice } from "./gpu.js";
-import { establishConnection } from "./network.js";
+import { MeshLoader } from "./mesh.js";
+import { createRoom, joinRoom } from "./network.js";
 
 let lastFrameTime = 0;
 
@@ -8,7 +9,13 @@ async function init() {
     if (!webgpuSupport) {
         return;
     }
-    establishConnection();
+    const params = new URLSearchParams(window.location.search);
+    const joinId = params.get("join");
+    if (joinId) {
+        joinRoom(joinId)
+    } else {
+        createRoom("bomber");
+    }
     requestAnimationFrame(main);
 }
 
