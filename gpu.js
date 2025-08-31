@@ -1,13 +1,14 @@
 let adapter;
 export let device;
-let presentationFormat;
+export let presentationFormat;
+export let canvas = document.getElementById("canvas");
 
-async function loadWGSLShader(f) {
+export async function loadWGSLShader(f) {
     let response = await fetch("shaders/" + f);
     return await response.text();
 }
 
-async function loadImage(path) {
+export async function loadImage(path) {
     const response = await fetch("textures/" + path);
     const blob = await response.blob();
     return await createImageBitmap(blob);
