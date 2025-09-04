@@ -13,9 +13,9 @@ struct VsOutput {
 }
 
 @vertex fn vs(vert: Vertex) -> VsOutput {
-    return VsOutput(vert.pos, vert.color);
+    return VsOutput(vec4f(vert.pos, 1), vert.color);
 }
 
-@fragment fn fs(fsIn: VsOutput) -> vec4f {
+@fragment fn fs(fsIn: VsOutput) -> @location(0) vec4f {
     return fsIn.color;
 }

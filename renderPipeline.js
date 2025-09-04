@@ -1,5 +1,6 @@
-import { device, loadWGSLShader, presentationFormat } from "./gpu.js";
+import { device, loadWGSLShader, presentationFormat, renderTexture, depthTexture } from "./gpu.js";
 
+let sceneLayout;
 let renderLayout;
 
 export const MainVertexDescriptor = {
@@ -19,6 +20,23 @@ export const IndicatorVertexDescriptor = {
     ]
 }
 
+export function setupRenderLayout() {
+    sceneLayout = device.createBindGroupLayout({
+        entries: [
+            {
+                binding: 0,
+                visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+                buffer: { type: "uniform" }
+            }
+        ]
+    });
+    renderLayout = device.createPipelineLayout({
+        bindGroupLayouts: [
+            sceneLayout
+        ]
+    });
+}
+
 export class RenderPipeline {
     constructor(shader, vertexDescriptor) {
         this.shader = shader;
@@ -27,7 +45,7 @@ export class RenderPipeline {
 
     async build() {
         let shaderCode = await loadWGSLShader(this.shader);
-        this.renderModule = device.createShaderModule({code: shaderCode});
+        let renderModule = device.createShaderModule({code: shaderCode});
         this.pipeline = device.createRenderPipeline({
             layout: renderLayout,
             vertex: {
@@ -54,7 +72,7 @@ export class RenderPipeline {
         });
         this.descriptor = {
             colorAttachments: [{
-                view: canvasTexture.createView(),
+                view: renderTexture.createView(),
                 clearValue: [0.25, 0.25, 0.25, 1],
                 loadOp: "clear",
                 storeOp: "store"
@@ -62,8 +80,8 @@ export class RenderPipeline {
             depthStencilAttachment: {
                 view: depthTexture.createView(),
                 depthClearValue: 1.0,
-                depthLoadOp: 'clear',
-                depthStoreOp: 'store'
+                depthLoadOp: "clear",
+                depthStoreOp: "store"
             }
         }
     }

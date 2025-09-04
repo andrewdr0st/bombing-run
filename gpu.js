@@ -1,7 +1,10 @@
 let adapter;
 export let device;
 export let presentationFormat;
-export let canvas = document.getElementById("canvas");
+const canvas = document.getElementById("canvas");
+export const webgpuCtx = canvas.getContext("webgpu");
+export let renderTexture;
+export let depthTexture;
 
 export async function loadWGSLShader(f) {
     let response = await fetch("shaders/" + f);
@@ -26,5 +29,16 @@ export async function setupGPUDevice() {
         return false;
     }
     presentationFormat = navigator.gpu.getPreferredCanvasFormat();
+    webgpuCtx.configure({
+        device,
+        format: presentationFormat,
+        alphaMode: "premultiplied"
+    });
+    renderTexture = webgpuCtx.getCurrentTexture();
+    depthTexture = device.createTexture({
+        size: [renderTexture.width, renderTexture.height],
+        format: "depth24plus",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT
+    });
     return true;
 }
