@@ -1,4 +1,5 @@
-import { device, setupGPUDevice, canvas } from "./gpu.js";
+import { canvas, aspectRatio, setupCanvas } from "./canvasManager.js";
+import { device, setupGPUDevice, updateRenderTexture } from "./gpu.js";
 import { MeshLoader } from "./mesh.js";
 import { createRoom, joinRoom } from "./network.js";
 import { IndicatorVertexDescriptor, RenderPipeline } from "./renderPipeline.js";
@@ -12,6 +13,7 @@ let lastFrameTime = 0;
 let rpass;
 
 async function init() {
+    setupCanvas();
     let webgpuSupport = await setupGPUDevice();
     if (!webgpuSupport) {
         return;
@@ -24,8 +26,7 @@ async function init() {
     setupBindGroups();
     rpass = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
     await rpass.build();
-    console.log(canvas.width);
-    let c = new Camera(canvas.width / canvas.height);
+    let c = new Camera(aspectRatio);
     c.position = [0, 5, 5];
     c.lookTo = [0, -1, -0.1];
     c.updateLookAt();
@@ -45,12 +46,14 @@ function main(currentTime) {
     const deltaTime = (currentTime - lastFrameTime) * 0.001;
     lastFrameTime = currentTime;
 
+    updateRenderTexture();
+
     const encoder = device.createCommandEncoder();
     rpass.run(encoder);
     const commandBuffer = encoder.finish();
     device.queue.submit([commandBuffer]);
 
-    //requestAnimationFrame(main);
+    requestAnimationFrame(main);
 }
 
 init();

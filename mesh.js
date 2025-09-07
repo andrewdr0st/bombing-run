@@ -28,8 +28,6 @@ export class MeshLoader {
         vertexList = vertexList.concat(this.vertices);
         this.indexStart = indexList.length;
         indexList = indexList.concat(this.indices);
-        console.log(vertexList);
-        console.log(indexList);
     }
 
     getMesh() {

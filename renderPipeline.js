@@ -55,7 +55,6 @@ export class RenderPipeline {
         });
         this.descriptor = {
             colorAttachments: [{
-                view: renderTexture.createView(),
                 clearValue: [0.25, 0.25, 0.25, 1],
                 loadOp: "clear",
                 storeOp: "store"
@@ -70,6 +69,7 @@ export class RenderPipeline {
     }
 
     run(encoder) {
+        this.descriptor.colorAttachments[0].view = renderTexture.createView();
         const pass = encoder.beginRenderPass(this.descriptor);
         pass.setPipeline(this.pipeline);
         pass.setVertexBuffer(0, vertexBuffer);

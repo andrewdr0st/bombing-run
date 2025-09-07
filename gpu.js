@@ -1,8 +1,8 @@
+import { canvas, webgpuCtx } from "./canvasManager.js";
+
 let adapter;
 export let device;
 export let presentationFormat;
-export const canvas = document.getElementById("canvas");
-export const webgpuCtx = canvas.getContext("webgpu");
 export let renderTexture;
 export let depthTexture;
 
@@ -34,11 +34,14 @@ export async function setupGPUDevice() {
         format: presentationFormat,
         alphaMode: "premultiplied"
     });
-    renderTexture = webgpuCtx.getCurrentTexture();
     depthTexture = device.createTexture({
-        size: [renderTexture.width, renderTexture.height],
+        size: [canvas.width, canvas.height],
         format: "depth24plus",
         usage: GPUTextureUsage.RENDER_ATTACHMENT
     });
     return true;
+}
+
+export function updateRenderTexture() {
+    renderTexture = webgpuCtx.getCurrentTexture();
 }
