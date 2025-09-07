@@ -1,7 +1,5 @@
 import { device, loadWGSLShader, presentationFormat, renderTexture, depthTexture } from "./gpu.js";
-
-let sceneLayout;
-let renderLayout;
+import { renderLayout } from "./layouts.js";
 
 export const MainVertexDescriptor = {
     size: 32,
@@ -18,23 +16,6 @@ export const IndicatorVertexDescriptor = {
         { shaderLocation: 0, offset: 0, format: "float32x3" },
         { shaderLocation: 1, offset: 12, format: "unorm8x4" }
     ]
-}
-
-export function setupRenderLayout() {
-    sceneLayout = device.createBindGroupLayout({
-        entries: [
-            {
-                binding: 0,
-                visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-                buffer: { type: "uniform" }
-            }
-        ]
-    });
-    renderLayout = device.createPipelineLayout({
-        bindGroupLayouts: [
-            sceneLayout
-        ]
-    });
 }
 
 export class RenderPipeline {

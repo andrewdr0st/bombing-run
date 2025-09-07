@@ -1,7 +1,10 @@
 import { setupGPUDevice } from "./gpu.js";
 import { MeshLoader } from "./mesh.js";
 import { createRoom, joinRoom } from "./network.js";
-import { IndicatorVertexDescriptor, RenderPipeline, setupRenderLayout } from "./renderPipeline.js";
+import { IndicatorVertexDescriptor, RenderPipeline } from "./renderPipeline.js";
+import { setupRenderLayout } from "./layouts.js";
+import { setupBindGroups } from "./bindGroups.js";
+import { setupBuffers } from "./buffers.js";
 
 let lastFrameTime = 0;
 
@@ -11,6 +14,8 @@ async function init() {
         return;
     }
     setupRenderLayout();
+    setupBuffers();
+    setupBindGroups();
     let p = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
     await p.build();
     const params = new URLSearchParams(window.location.search);

@@ -2,6 +2,10 @@ struct IndicatorInfo {
     transform: mat4x4f
 }
 
+struct Scene {
+    viewProjection: mat4x4f
+}
+
 struct Vertex {
     @location(0) pos: vec3f,
     @location(1) color: vec4f
@@ -12,8 +16,12 @@ struct VsOutput {
     @location(0) color: vec4f
 }
 
+@group(0) @binding(0) var<uniform> scene: Scene;
+@group(1) @binding(0) var<uniform> indicatorData: IndicatorInfo;
+
 @vertex fn vs(vert: Vertex) -> VsOutput {
-    return VsOutput(vec4f(vert.pos, 1), vert.color);
+    let pos = scene.viewProjection * indicatorData.transform * vec4f(vert.pos, 1);
+    return VsOutput(pos, vert.color);
 }
 
 @fragment fn fs(fsIn: VsOutput) -> @location(0) vec4f {
