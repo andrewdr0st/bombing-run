@@ -1,8 +1,11 @@
+export let vertexList = [];
+export let indexList = [];
+
 export class Mesh {
-    constructor(v, vCount, i, iCount) {
-        this.vertices = v;
+    constructor(vStart, vCount, iStart, iCount) {
+        this.vStar = vStart;
         this.vertexCount = vCount;
-        this.indices = i;
+        this.iStart = iStart;
         this.indexCount = iCount;
     }
 }
@@ -16,10 +19,21 @@ export class MeshLoader {
         this.vertexCount = 0;
         this.indices = [];
         this.indexCount = 0;
+        this.vertexStart = 0;
+        this.indexStart = 0;
+    }
+
+    addToList() {
+        this.vertexStart = vertexList.length;
+        vertexList = vertexList.concat(this.vertices);
+        this.indexStart = indexList.length;
+        indexList = indexList.concat(this.indices);
+        console.log(vertexList);
+        console.log(indexList);
     }
 
     getMesh() {
-        return new Mesh(new Float32Array(this.vertices), this.vertexCount, new Uint32Array(this.indices), this.indexCount);
+        return new Mesh(this.vertexStart, this.vertexCount, this.indexStart, this.indexCount);
     }
 
     async parseObjFile(filename) {

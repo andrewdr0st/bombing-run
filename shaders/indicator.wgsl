@@ -25,5 +25,5 @@ struct VsOutput {
 }
 
 @fragment fn fs(fsIn: VsOutput) -> @location(0) vec4f {
-    return fsIn.color;
+    return vec4f(0, 1, 1, 1);
 }

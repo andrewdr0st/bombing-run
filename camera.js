@@ -1,3 +1,5 @@
+import { device } from "./gpu.js";
+import { sceneBuffer } from "./buffers.js";
 const { vec3, mat4 } = wgpuMatrix;
 
 export class Camera {
@@ -24,5 +26,9 @@ export class Camera {
         this.viewMatrix = mat4.lookAt(this.position, this.lookAt, this.up);
         const projection = mat4.ortho(this.minCorner[0], this.maxCorner[0], this.minCorner[1], this.maxCorner[1], this.minCorner[2], this.maxCorner[2]);
         this.viewProjectionMatrix = mat4.multiply(projection, this.viewMatrix);
+    }
+
+    writeData() {
+        device.queue.writeBuffer(sceneBuffer, 0, this.viewProjectionMatrix);
     }
 }

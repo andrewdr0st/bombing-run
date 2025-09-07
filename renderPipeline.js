@@ -1,5 +1,7 @@
 import { device, loadWGSLShader, presentationFormat, renderTexture, depthTexture } from "./gpu.js";
 import { renderLayout } from "./layouts.js";
+import { vertexBuffer, indexBuffer } from "./buffers.js";
+import { sceneBindGroup, objectsBindGroup } from "./bindGroups.js";
 
 export const MainVertexDescriptor = {
     size: 32,
@@ -67,7 +69,14 @@ export class RenderPipeline {
         }
     }
 
-    run() {
-
+    run(encoder) {
+        const pass = encoder.beginRenderPass(this.descriptor);
+        pass.setPipeline(this.pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, "uint32");
+        pass.setBindGroup(0, sceneBindGroup);
+        pass.setBindGroup(1, objectsBindGroup);
+        pass.drawIndexed(24);
+        pass.end();
     }
 }

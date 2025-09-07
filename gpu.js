@@ -1,7 +1,7 @@
 let adapter;
 export let device;
 export let presentationFormat;
-const canvas = document.getElementById("canvas");
+export const canvas = document.getElementById("canvas");
 export const webgpuCtx = canvas.getContext("webgpu");
 export let renderTexture;
 export let depthTexture;
