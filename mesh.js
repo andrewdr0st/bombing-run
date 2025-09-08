@@ -1,9 +1,18 @@
 export let vertexList = [];
 export let indexList = [];
 
+export let indicatorMesh;
+
+export async function loadMeshes() {
+    let m = new MeshLoader();
+    await m.parseObjFile("indicator.obj");
+    m.addToList();
+    indicatorMesh = m.getMesh();
+}
+
 export class Mesh {
     constructor(vStart, vCount, iStart, iCount) {
-        this.vStar = vStart;
+        this.vStart = vStart;
         this.vertexCount = vCount;
         this.iStart = iStart;
         this.indexCount = iCount;

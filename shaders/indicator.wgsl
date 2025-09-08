@@ -17,13 +17,13 @@ struct VsOutput {
 }
 
 @group(0) @binding(0) var<uniform> scene: Scene;
-@group(1) @binding(0) var<uniform> indicatorData: IndicatorInfo;
+@group(1) @binding(0) var<uniform> indicatorData: array<IndicatorInfo, 12>;
 
-@vertex fn vs(vert: Vertex) -> VsOutput {
-    let pos = scene.viewProjection * indicatorData.transform * vec4f(vert.pos, 1);
-    return VsOutput(pos, vert.color);
+@vertex fn vs(vert: Vertex, @builtin(instance_index) inst: u32) -> VsOutput {
+    let pos = scene.viewProjection * indicatorData[inst].transform * vec4f(vert.pos, 1);
+    return VsOutput(pos, select(vec4f(1, 0.5, 0, 1), vec4f(0, 1, 1, 1), inst > 0));
 }
 
 @fragment fn fs(fsIn: VsOutput) -> @location(0) vec4f {
-    return vec4f(0, 1, 1, 1);
+    return vec4f(fsIn.color);
 }

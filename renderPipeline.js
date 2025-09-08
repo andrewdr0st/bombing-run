@@ -3,6 +3,9 @@ import { renderLayout } from "./layouts.js";
 import { vertexBuffer, indexBuffer } from "./buffers.js";
 import { sceneBindGroup, objectsBindGroup } from "./bindGroups.js";
 
+export let mainPipeline;
+export let indicatorPipeline;
+
 export const MainVertexDescriptor = {
     size: 32,
     attributes: [
@@ -18,6 +21,11 @@ export const IndicatorVertexDescriptor = {
         { shaderLocation: 0, offset: 0, format: "float32x3" },
         { shaderLocation: 1, offset: 12, format: "unorm8x4" }
     ]
+}
+
+export async function createPipelines() {
+    indicatorPipeline = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
+    await indicatorPipeline.build();
 }
 
 export class RenderPipeline {
@@ -68,7 +76,7 @@ export class RenderPipeline {
         }
     }
 
-    run(encoder) {
+    run(encoder, mesh, instanceCount) {
         this.descriptor.colorAttachments[0].view = renderTexture.createView();
         const pass = encoder.beginRenderPass(this.descriptor);
         pass.setPipeline(this.pipeline);
@@ -76,7 +84,7 @@ export class RenderPipeline {
         pass.setIndexBuffer(indexBuffer, "uint32");
         pass.setBindGroup(0, sceneBindGroup);
         pass.setBindGroup(1, objectsBindGroup);
-        pass.drawIndexed(24);
+        pass.drawIndexed(mesh.indexCount, instanceCount, mesh.iStart, mesh.vStart, 0);
         pass.end();
     }
 }

@@ -28,7 +28,7 @@ export function setupBuffers() {
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
     indicatorBuffer = device.createBuffer({
-        size: MAT4x4_BYTE_SIZE,
+        size: MAT4x4_BYTE_SIZE * 12,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
 }

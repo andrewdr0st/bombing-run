@@ -1,16 +1,16 @@
 import { canvas, aspectRatio, setupCanvas } from "./canvasManager.js";
 import { device, setupGPUDevice, updateRenderTexture } from "./gpu.js";
-import { MeshLoader } from "./mesh.js";
+import { loadMeshes } from "./mesh.js";
 import { createRoom, joinRoom } from "./network.js";
-import { IndicatorVertexDescriptor, RenderPipeline } from "./renderPipeline.js";
+import { createPipelines, IndicatorVertexDescriptor, RenderPipeline } from "./renderPipeline.js";
 import { setupRenderLayout } from "./layouts.js";
 import { setupBindGroups } from "./bindGroups.js";
 import { indicatorBuffer, setupBuffers } from "./buffers.js";
 import { Camera } from "./camera.js";
+import { drawIndicators, updateIndicators } from "./indicators.js";
 const { mat4 } = wgpuMatrix;
 
 let lastFrameTime = 0;
-let rpass;
 
 async function init() {
     setupCanvas();
@@ -18,20 +18,18 @@ async function init() {
     if (!webgpuSupport) {
         return;
     }
-    let m = new MeshLoader();
-    await m.parseObjFile("indicator.obj");
-    m.addToList();
+    await loadMeshes();
     setupRenderLayout();
     setupBuffers();
     setupBindGroups();
-    rpass = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
-    await rpass.build();
+    await createPipelines();
     let c = new Camera(aspectRatio);
     c.position = [0, 5, 5];
     c.lookTo = [0, -1, -0.1];
     c.updateLookAt();
     c.writeData();
     device.queue.writeBuffer(indicatorBuffer, 0, mat4.identity());
+    updateIndicators();
     const params = new URLSearchParams(window.location.search);
     const joinId = params.get("join");
     if (joinId) {
@@ -49,7 +47,7 @@ function main(currentTime) {
     updateRenderTexture();
 
     const encoder = device.createCommandEncoder();
-    rpass.run(encoder);
+    drawIndicators(encoder);
     const commandBuffer = encoder.finish();
     device.queue.submit([commandBuffer]);
 
