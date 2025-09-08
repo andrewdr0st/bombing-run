@@ -2,7 +2,7 @@ import { canvas, aspectRatio, setupCanvas } from "./canvasManager.js";
 import { device, setupGPUDevice, updateRenderTexture } from "./gpu.js";
 import { loadMeshes } from "./mesh.js";
 import { createRoom, joinRoom } from "./network.js";
-import { createPipelines, IndicatorVertexDescriptor, RenderPipeline } from "./renderPipeline.js";
+import { createPipelines } from "./renderPipeline.js";
 import { setupRenderLayout } from "./layouts.js";
 import { setupBindGroups } from "./bindGroups.js";
 import { indicatorBuffer, setupBuffers } from "./buffers.js";
