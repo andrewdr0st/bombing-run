@@ -21,7 +21,7 @@ struct VsOutput {
 
 @vertex fn vs(vert: Vertex, @builtin(instance_index) inst: u32) -> VsOutput {
     let pos = scene.viewProjection * indicatorData[inst].transform * vec4f(vert.pos, 1);
-    return VsOutput(pos, select(vec4f(1, 0.5, 0, 1), vec4f(0, 1, 1, 1), inst > 0));
+    return VsOutput(pos, select(vec4f(1, 0.5, 0, 1), vec4f(0, 1, 1, 1), inst > 2));
 }
 
 @fragment fn fs(fsIn: VsOutput) -> @location(0) vec4f {

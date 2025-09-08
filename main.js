@@ -29,7 +29,6 @@ async function init() {
     c.updateLookAt();
     c.writeData();
     device.queue.writeBuffer(indicatorBuffer, 0, mat4.identity());
-    updateIndicators();
     const params = new URLSearchParams(window.location.search);
     const joinId = params.get("join");
     if (joinId) {
@@ -43,6 +42,8 @@ async function init() {
 function main(currentTime) {
     const deltaTime = (currentTime - lastFrameTime) * 0.001;
     lastFrameTime = currentTime;
+
+    updateIndicators(currentTime);
 
     updateRenderTexture();
 
