@@ -11,8 +11,8 @@ export class Camera {
         this.aspectRatio = aspectRatio;
         this.forward;
         this.right;
-        this.minCorner = [-10, -10, -10];
-        this.maxCorner = [10, 10, 10];
+        this.minCorner = [-12.5, -8, 0];
+        this.maxCorner = [12.5, 8, 20];
         this.viewMatrix;
         this.viewProjectionMatrix;
         this.updateLookAt();

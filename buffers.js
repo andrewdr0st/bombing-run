@@ -1,8 +1,10 @@
 import { device } from "./gpu.js";
-import { vertexList, indexList } from "./mesh.js";
+import { vertexList, indexList, smallVertexList, smallIndexList } from "./mesh.js";
 
 export let vertexBuffer;
 export let indexBuffer;
+export let smallVertexBuffer;
+export let smallIndexBuffer;
 
 export let sceneBuffer;
 export let indicatorBuffer;
@@ -23,6 +25,19 @@ export function setupBuffers() {
     });
     device.queue.writeBuffer(vertexBuffer, 0, vertices);
     device.queue.writeBuffer(indexBuffer, 0, indices);
+
+    const svertices = new Float32Array(smallVertexList);
+    const sindices = new Uint32Array(smallIndexList);
+    smallVertexBuffer = device.createBuffer({
+        size: svertices.byteLength,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+    });
+    smallIndexBuffer = device.createBuffer({
+        size: sindices.byteLength,
+        usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
+    });
+    device.queue.writeBuffer(smallVertexBuffer, 0, svertices);
+    device.queue.writeBuffer(smallIndexBuffer, 0, sindices);
 
     sceneBuffer = device.createBuffer({
         size: MAT4x4_BYTE_SIZE,

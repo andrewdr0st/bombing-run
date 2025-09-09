@@ -1,6 +1,6 @@
 import { device, loadWGSLShader, presentationFormat, renderTexture, depthTexture } from "./gpu.js";
 import { renderLayout } from "./layouts.js";
-import { vertexBuffer, indexBuffer } from "./buffers.js";
+import { vertexBuffer, indexBuffer, smallVertexBuffer, smallIndexBuffer } from "./buffers.js";
 import { sceneBindGroup, objectsBindGroup, texturesBindGroup } from "./bindGroups.js";
 
 export let mainPipeline;
@@ -24,15 +24,16 @@ export const IndicatorVertexDescriptor = {
 }
 
 export async function createPipelines() {
-    indicatorPipeline = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
+    indicatorPipeline = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor, true);
     mainPipeline = new RenderPipeline("main.wgsl", MainVertexDescriptor);
     await Promise.all([indicatorPipeline.build(), mainPipeline.build()]);
 }
 
 export class RenderPipeline {
-    constructor(shader, vertexDescriptor) {
+    constructor(shader, vertexDescriptor, small=false) {
         this.shader = shader;
         this.vertexDescriptor = vertexDescriptor;
+        this.small = small;
     }
 
     async build() {
@@ -64,14 +65,14 @@ export class RenderPipeline {
         });
         this.descriptor = {
             colorAttachments: [{
-                clearValue: [0.25, 0.25, 0.25, 1],
-                loadOp: "load",
+                clearValue: [0.1, 0.1, 0.15, 1],
+                loadOp: this.small ? "clear" : "load",
                 storeOp: "store"
             }],
             depthStencilAttachment: {
                 view: depthTexture.createView(),
                 depthClearValue: 1.0,
-                depthLoadOp: "clear",
+                depthLoadOp: this.small ? "clear" : "load",
                 depthStoreOp: "store"
             }
         }
@@ -81,8 +82,13 @@ export class RenderPipeline {
         this.descriptor.colorAttachments[0].view = renderTexture.createView();
         const pass = encoder.beginRenderPass(this.descriptor);
         pass.setPipeline(this.pipeline);
-        pass.setVertexBuffer(0, vertexBuffer);
-        pass.setIndexBuffer(indexBuffer, "uint32");
+        if (this.small) {
+            pass.setVertexBuffer(0, smallVertexBuffer);
+            pass.setIndexBuffer(smallIndexBuffer, "uint32");
+        } else {
+            pass.setVertexBuffer(0, vertexBuffer);
+            pass.setIndexBuffer(indexBuffer, "uint32");
+        }
         pass.setBindGroup(0, sceneBindGroup);
         pass.setBindGroup(1, objectsBindGroup);
         pass.setBindGroup(2, texturesBindGroup);

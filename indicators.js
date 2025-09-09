@@ -4,19 +4,22 @@ import { indicatorBuffer } from "./buffers.js";
 import { indicatorPipeline } from "./renderPipeline.js";
 const { mat4 } = wgpuMatrix;
 
-let indicatorCount = 2;
+let indicatorCount = 3;
 const moveSpeed = 0.001;
+const h = 0.4;
+const gap = 0.2;
 
 const baseTransforms = [
-    mat4.translation([-2, 0, 0]),
-    mat4.translation([2, 0, 2])
+    mat4.translation([5, 0.51, 5]),
+    mat4.translation([-7, 0.51, -7]),
+    mat4.translation([-5, 0.51, -3])
 ]
 
 const indicatorTransforms = [null, null, null, null, null, null];
 
 export function updateIndicators(currentTime) {
-    const t1 = mat4.translation([0, Math.sin(currentTime * moveSpeed) + 2, 0]);
-    const t2 = mat4.translation([0, Math.sin(currentTime * moveSpeed) * 2 + 4, 0]);
+    const t1 = mat4.translation([0, Math.sin(currentTime * moveSpeed) * gap + h, 0]);
+    const t2 = mat4.translation([0, Math.sin(currentTime * moveSpeed) * gap * 2 + h * 2, 0]);
     for (let i = 0; i < indicatorCount; i++) {
         let idx = i * 3;
         indicatorTransforms[idx] = baseTransforms[i];

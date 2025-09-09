@@ -26,8 +26,8 @@ async function init() {
     setupBindGroups();
     await createPipelines();
     let c = new Camera(aspectRatio);
-    c.position = [0, 5, 5];
-    c.lookTo = [0, -1, -0.5];
+    c.position = [-3, 5, 3];
+    c.lookTo = [0.75, -1, -0.75];
     c.updateLookAt();
     c.writeData();
     device.queue.writeBuffer(indicatorBuffer, 0, mat4.identity());

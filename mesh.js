@@ -1,5 +1,7 @@
 export let vertexList = [];
 export let indexList = [];
+export let smallVertexList = [];
+export let smallIndexList = [];
 
 export let indicatorMesh;
 export let tileMesh;
@@ -18,8 +20,6 @@ export async function loadMeshes() {
     loaderList[1].addToList();
     indicatorMesh = loaderList[0].getMesh();
     tileMesh = loaderList[1].getMesh();
-    console.log(indicatorMesh);
-    console.log(tileMesh);
 }
 
 export class Mesh {
@@ -42,13 +42,21 @@ export class MeshLoader {
         this.indexCount = 0;
         this.vertexStart = 0;
         this.indexStart = 0;
+        this.small = false;
     }
 
     addToList() {
-        this.vertexStart = vertexList.length;
-        vertexList = vertexList.concat(this.vertices);
-        this.indexStart = indexList.length;
-        indexList = indexList.concat(this.indices);
+        if (this.small) {
+            this.vertexStart = smallVertexList.length;
+            smallVertexList = smallVertexList.concat(this.vertices);
+            this.indexStart = smallIndexList.length;
+            smallIndexList = smallIndexList.concat(this.indices);
+        } else {
+            this.vertexStart = vertexList.length;
+            vertexList = vertexList.concat(this.vertices);
+            this.indexStart = indexList.length;
+            indexList = indexList.concat(this.indices);
+        }
     }
 
     getMesh() {
@@ -90,6 +98,7 @@ export class MeshLoader {
                             this.vertices.push(this.normals[n], this.normals[n + 1], this.normals[n + 2]);
                         } else {
                             this.vertices.push(0);
+                            this.small = true;
                         }
                         idx = this.vertexCount;
                         vertexMap.set(s, idx);
