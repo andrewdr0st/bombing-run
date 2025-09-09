@@ -10,7 +10,7 @@ import { setupCamera } from "./camera.js";
 import { drawIndicators, updateIndicators } from "./indicators.js";
 import { drawTiles, updateTiles } from "./tiles.js";
 import { setupTextures } from "./textures.js";
-import { performRaycast } from "./raycast.js";
+import { createBoxes, performRaycast } from "./raycast.js";
 const { mat4 } = wgpuMatrix;
 
 let lastFrameTime = 0;
@@ -34,6 +34,7 @@ async function init() {
     } else {
         createRoom("bomber");
     }
+    createBoxes();
     updateTiles();
     requestAnimationFrame(main);
 }
