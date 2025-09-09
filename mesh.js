@@ -2,12 +2,24 @@ export let vertexList = [];
 export let indexList = [];
 
 export let indicatorMesh;
+export let tileMesh;
 
 export async function loadMeshes() {
-    let m = new MeshLoader();
-    await m.parseObjFile("indicator.obj");
-    m.addToList();
-    indicatorMesh = m.getMesh();
+    const meshList = ["indicator.obj", "tile.obj"];
+    const loaderList = [];
+    const promiseList = [];
+    for (let i = 0; i < meshList.length; i++) {
+        const loader = new MeshLoader();
+        loaderList.push(loader);
+        promiseList.push(loader.parseObjFile(meshList[i]));
+    }
+    await Promise.all(promiseList);
+    loaderList[0].addToList();
+    loaderList[1].addToList();
+    indicatorMesh = loaderList[0].getMesh();
+    tileMesh = loaderList[1].getMesh();
+    console.log(indicatorMesh);
+    console.log(tileMesh);
 }
 
 export class Mesh {

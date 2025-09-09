@@ -6,6 +6,7 @@ export let indexBuffer;
 
 export let sceneBuffer;
 export let indicatorBuffer;
+export let tileBuffer;
 
 const MAT4x4_BYTE_SIZE = 64;
 
@@ -29,6 +30,10 @@ export function setupBuffers() {
     });
     indicatorBuffer = device.createBuffer({
         size: MAT4x4_BYTE_SIZE * 12,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+    tileBuffer = device.createBuffer({
+        size: MAT4x4_BYTE_SIZE * 18,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
 }

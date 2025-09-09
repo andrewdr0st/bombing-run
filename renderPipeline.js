@@ -1,7 +1,7 @@
 import { device, loadWGSLShader, presentationFormat, renderTexture, depthTexture } from "./gpu.js";
 import { renderLayout } from "./layouts.js";
 import { vertexBuffer, indexBuffer } from "./buffers.js";
-import { sceneBindGroup, objectsBindGroup } from "./bindGroups.js";
+import { sceneBindGroup, objectsBindGroup, texturesBindGroup } from "./bindGroups.js";
 
 export let mainPipeline;
 export let indicatorPipeline;
@@ -25,7 +25,8 @@ export const IndicatorVertexDescriptor = {
 
 export async function createPipelines() {
     indicatorPipeline = new RenderPipeline("indicator.wgsl", IndicatorVertexDescriptor);
-    await indicatorPipeline.build();
+    mainPipeline = new RenderPipeline("main.wgsl", MainVertexDescriptor);
+    await Promise.all([indicatorPipeline.build(), mainPipeline.build()]);
 }
 
 export class RenderPipeline {
@@ -64,7 +65,7 @@ export class RenderPipeline {
         this.descriptor = {
             colorAttachments: [{
                 clearValue: [0.25, 0.25, 0.25, 1],
-                loadOp: "clear",
+                loadOp: "load",
                 storeOp: "store"
             }],
             depthStencilAttachment: {
@@ -84,7 +85,8 @@ export class RenderPipeline {
         pass.setIndexBuffer(indexBuffer, "uint32");
         pass.setBindGroup(0, sceneBindGroup);
         pass.setBindGroup(1, objectsBindGroup);
-        pass.drawIndexed(mesh.indexCount, instanceCount, mesh.iStart, mesh.vStart, 0);
+        pass.setBindGroup(2, texturesBindGroup);
+        pass.drawIndexed(mesh.indexCount, instanceCount, mesh.iStart);
         pass.end();
     }
 }

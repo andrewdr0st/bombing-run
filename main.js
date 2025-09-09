@@ -8,6 +8,8 @@ import { setupBindGroups } from "./bindGroups.js";
 import { indicatorBuffer, setupBuffers } from "./buffers.js";
 import { Camera } from "./camera.js";
 import { drawIndicators, updateIndicators } from "./indicators.js";
+import { drawTiles, updateTiles } from "./tiles.js";
+import { setupTextures } from "./textures.js";
 const { mat4 } = wgpuMatrix;
 
 let lastFrameTime = 0;
@@ -18,14 +20,14 @@ async function init() {
     if (!webgpuSupport) {
         return;
     }
-    await loadMeshes();
+    await Promise.all([loadMeshes(), setupTextures()]);
     setupRenderLayout();
     setupBuffers();
     setupBindGroups();
     await createPipelines();
     let c = new Camera(aspectRatio);
     c.position = [0, 5, 5];
-    c.lookTo = [0, -1, -0.1];
+    c.lookTo = [0, -1, -0.5];
     c.updateLookAt();
     c.writeData();
     device.queue.writeBuffer(indicatorBuffer, 0, mat4.identity());
@@ -36,6 +38,7 @@ async function init() {
     } else {
         createRoom("bomber");
     }
+    updateTiles();
     requestAnimationFrame(main);
 }
 
@@ -49,6 +52,7 @@ function main(currentTime) {
 
     const encoder = device.createCommandEncoder();
     drawIndicators(encoder);
+    drawTiles(encoder);
     const commandBuffer = encoder.finish();
     device.queue.submit([commandBuffer]);
 
