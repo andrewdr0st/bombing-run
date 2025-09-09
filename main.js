@@ -1,15 +1,16 @@
-import { canvas, aspectRatio, setupCanvas } from "./canvasManager.js";
+import { canvas, setupCanvas } from "./canvasManager.js";
 import { device, setupGPUDevice, updateRenderTexture } from "./gpu.js";
 import { loadMeshes } from "./mesh.js";
 import { createRoom, joinRoom } from "./network.js";
 import { createPipelines } from "./renderPipeline.js";
 import { setupRenderLayout } from "./layouts.js";
 import { setupBindGroups } from "./bindGroups.js";
-import { indicatorBuffer, setupBuffers } from "./buffers.js";
-import { Camera } from "./camera.js";
+import { setupBuffers } from "./buffers.js";
+import { setupCamera } from "./camera.js";
 import { drawIndicators, updateIndicators } from "./indicators.js";
 import { drawTiles, updateTiles } from "./tiles.js";
 import { setupTextures } from "./textures.js";
+import { performRaycast } from "./raycast.js";
 const { mat4 } = wgpuMatrix;
 
 let lastFrameTime = 0;
@@ -25,12 +26,7 @@ async function init() {
     setupBuffers();
     setupBindGroups();
     await createPipelines();
-    let c = new Camera(aspectRatio);
-    c.position = [-3, 5, 3];
-    c.lookTo = [0.75, -1, -0.75];
-    c.updateLookAt();
-    c.writeData();
-    device.queue.writeBuffer(indicatorBuffer, 0, mat4.identity());
+    setupCamera();
     const params = new URLSearchParams(window.location.search);
     const joinId = params.get("join");
     if (joinId) {
@@ -58,5 +54,13 @@ function main(currentTime) {
 
     requestAnimationFrame(main);
 }
+
+document.addEventListener("click", (e) => {
+    let w = canvas.width / 2;
+    let h = canvas.height / 2;
+    let x = (e.clientX - w) / w;
+    let y = (h - e.clientY) / h;
+    performRaycast(x, y);
+});
 
 init();
