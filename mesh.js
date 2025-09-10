@@ -5,9 +5,10 @@ export let smallIndexList = [];
 
 export let indicatorMesh;
 export let tileMesh;
+export let hqMesh;
 
 export async function loadMeshes() {
-    const meshList = ["indicator.obj", "tile.obj"];
+    const meshList = ["indicator.obj", "tile.obj", "hq.obj"];
     const loaderList = [];
     const promiseList = [];
     for (let i = 0; i < meshList.length; i++) {
@@ -16,10 +17,12 @@ export async function loadMeshes() {
         promiseList.push(loader.parseObjFile(meshList[i]));
     }
     await Promise.all(promiseList);
-    loaderList[0].addToList();
-    loaderList[1].addToList();
+    for (let i = 0; i < loaderList.length; i++) {
+        loaderList[i].addToList();
+    }
     indicatorMesh = loaderList[0].getMesh();
     tileMesh = loaderList[1].getMesh();
+    hqMesh = loaderList[2].getMesh();
 }
 
 export class Mesh {
@@ -52,7 +55,7 @@ export class MeshLoader {
             this.indexStart = smallIndexList.length;
             smallIndexList = smallIndexList.concat(this.indices);
         } else {
-            this.vertexStart = vertexList.length;
+            this.vertexStart = vertexList.length / 8;
             vertexList = vertexList.concat(this.vertices);
             this.indexStart = indexList.length;
             indexList = indexList.concat(this.indices);

@@ -92,7 +92,7 @@ export class RenderPipeline {
         pass.setBindGroup(0, sceneBindGroup);
         pass.setBindGroup(1, objectsBindGroup);
         pass.setBindGroup(2, texturesBindGroup);
-        pass.drawIndexed(mesh.indexCount, instanceCount, mesh.iStart);
+        pass.drawIndexed(mesh.indexCount, instanceCount, mesh.iStart, mesh.vStart);
         pass.end();
     }
 }
